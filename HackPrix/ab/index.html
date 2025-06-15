@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Journey Ahead - Pregnancy Companion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: linear-gradient(to right, #fce3ec, #ffe9d2);
+      color: #333;
+      padding: 30px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      padding: 30px;
+      animation: slideIn 1s ease-in-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #dd4f75;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 8px;
+      font-size: 16px;
+    }
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    button {
+      margin-top: 25px;
+      background: #dd4f75;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #c43e65;
+    }
+    .output {
+      margin-top: 30px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    .section {
+      background: #fff7f9;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .section h3 {
+      color: #c43e65;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🤰 Journey Ahead</h1>
+
+    <label for="week">Current Pregnancy Week:</label>
+    <input type="number" id="week" min="1" max="40" placeholder="Enter week (1–40)" />
+    <div id="week-error" class="error">Please enter a valid week between 1 and 40.</div>
+
+    <label for="symptoms">How do you feel physically?</label>
+    <textarea id="symptoms" placeholder="e.g. Back pain, swelling..."></textarea>
+
+    <label for="emotions">How do you feel emotionally?</label>
+    <textarea id="emotions" placeholder="e.g. Calm, excited..."></textarea>
+
+    <label for="concerns">Any complications or concerns?</label>
+    <input type="text" id="concerns" placeholder="Optional" />
+
+    <button onclick="generateGuide()">✨ Show Me What’s Ahead</button>
+
+    <div id="output" class="output"></div>
+  </div>
+
+  <script>
+    const weekDescriptions = {
+  1: "You may not feel anything unusual, but your body is quietly preparing. Hormones begin shifting, laying the groundwork for a new life. Fertilization occurs and the zygote forms. This tiny ball of cells begins dividing rapidly. Though you can't detect it, an incredible journey has just begun. There's no need to change your routine yet. Your womb is about to become a life-sustaining sanctuary. Emotionally, this may still feel abstract. It’s okay to feel unsure or unaware. The miracle is already underway, even if unnoticed.",
+  2: "Your body starts responding to subtle hormonal shifts. You may feel mild bloating, cramps, or emotional sensitivity. The fertilized egg travels through your fallopian tube. It’s preparing to nestle into your uterus. This implantation will establish a connection with your blood supply. It marks the beginning of your placenta’s development. You may not feel any of this, and that’s normal. Your body is working efficiently in the background. Emotionally, anticipation may begin to grow. Everything is right on track.",
+  3: "This week marks implantation into the uterine wall. You may experience light spotting or cramping. Your hormone levels rise to support the pregnancy. The embryo begins forming basic structures. Cells start organizing into layers that will become organs. You’re laying the foundation for new life. Emotionally, you may feel tired or even irritable. Many still don’t realize they’re pregnant. Your womb has officially welcomed your baby. A quiet but powerful transformation begins.",
+  4: "Fatigue or sore breasts may set in. Hormones like hCG ramp up in your system. A missed period might be your first clue. Your body is undergoing significant internal changes. The embryo grows rapidly, forming the neural tube. This becomes the brain and spinal cord. Emotionally, excitement and anxiety may mix. Your body is now a full-time construction site. Though invisible outside, the work within is nonstop. You’ve entered the earliest stages of motherhood.",
+  5: "You may begin experiencing morning sickness. Fatigue and mood swings may intensify. Your body is adjusting to new hormonal rhythms. Internally, your baby’s heart begins beating. It’s one of the first vital organs to function. The circulatory system is taking shape. Emotionally, you may feel more sensitive or overwhelmed. Rest becomes increasingly important. Your tiny baby is growing at an astonishing rate. It’s okay to pause and take care of yourself.",
+  6: "You might notice a heightened sense of smell. Nausea and exhaustion can feel more intense. Hormones are peaking to sustain the pregnancy. The baby’s brain and spine are developing quickly. Tiny limb buds begin to emerge. Their heart is beating with a steady rhythm. You may feel joy mixed with discomfort. It’s normal to struggle during early weeks. Small victories — like hydration — go a long way. Trust your body and lean on your support system.",
+  7: "Your uterus is growing and may cause mild cramping. Nausea and fatigue may be constant companions. Hormones continue to fluctuate wildly. Meanwhile, your baby develops arms, legs, and facial features. The tail disappears and organs continue forming. Baby’s brain cells multiply at lightning speed. Emotionally, you might feel drained or tearful. Every symptom is part of a greater purpose. Your baby is growing more human by the day. You’re doing more than you realize.",
+  8: "You might feel bloated and your clothes may fit tighter. Morning sickness, aversions, and exhaustion may linger. You’re likely craving rest and predictability. Inside you, baby is constantly moving (though undetectable yet). Fingers and toes start to take shape. Their heartbeat grows stronger and faster. Emotionally, you may crave reassurance and calm. It’s normal to want validation during this time. Your body is performing miracles — even in discomfort. You are becoming someone’s world.",
+  9: "Nausea may intensify and emotions may fluctuate wildly. You might notice oilier skin or new food preferences. Your body is adapting to sustain rapid changes. Baby is the size of a grape and developing muscles. Eyes, ears, and eyelids are now forming. They’re starting to look more baby-like. You may feel joyful one moment, exhausted the next. Be gentle with yourself and your expectations. Your body’s signals are valid and important. This week brings both intensity and purpose.",
+  10: "Your uterus is now double its original size. You may feel bloated, constipated, or very tired. Symptoms may start to ease or shift. Baby’s facial features become more defined. Their brain is growing rapidly. Bones and cartilage begin forming. Emotionally, the pregnancy may feel more real. You’re nearly through the first trimester. This is a huge accomplishment. Continue nourishing yourself and seeking rest.",
+  11: "You may experience emotional surges or skin changes. Hunger might increase as nausea fades. Hormones continue affecting your mood and energy. Baby’s bones begin to harden this week. Tooth buds and nail beds are forming. Organs are functioning more independently. You may start dreaming more vividly. It’s okay to feel a wide range of emotions. Baby now resembles a tiny human more than ever. Your second trimester is within reach.",
+  12: "You might feel a little more energetic. Some early symptoms begin to ease. Your bump may begin to emerge slightly. Baby is now fully formed and enters a growth phase. Reflexes like sucking and swallowing begin. Organs like the liver and kidneys start working. You may feel more emotionally balanced. The risk of miscarriage drops significantly. It’s a good time to breathe and reflect. Your body and baby are thriving.",
+  13: "Fatigue fades and appetite may increase. You may feel relief and renewed energy. Your skin may glow or break out. Baby is the size of a peach and growing fast. Vocal cords and fingerprints are forming. Their body starts catching up to the head in size. This week marks the second trimester. It often brings a sense of emotional stability. Celebrate this new chapter in your journey. You’re stepping into a powerful phase.",
+  14: "Clothes may start fitting differently. You may feel more confident and physically stable. Nausea usually declines significantly. Baby’s facial expressions begin forming. Their kidneys start producing urine. Arms and legs grow more proportional. You may feel emotionally more connected. Some find their sex drive returns. Start thinking about gentle activity or stretching. You’re building strength for what’s ahead.",
+  15: "You may feel pelvic pressure or backache. Nasal congestion or headaches may pop up. Embrace hydration and regular movement. Baby is growing hair, eyebrows, and bones. They can sense light through closed eyes. Their limbs now bend and stretch. You may feel inspired to start planning. Emotional connection deepens. Listen to your body’s shifting needs. Your pregnancy is progressing beautifully.",
+  16: "You may experience round ligament pain. Skin may feel dry or sensitive. Some begin to notice a pregnancy glow. Baby can now hear muffled voices. Facial muscles begin moving. Baby may begin tiny kicks — though hard to notice. Your bond may deepen as awareness grows. Emotionally, you might feel a sense of awe. A belly bump might now be visible. Cherish this gentle stage.",
+  17: "You may notice your center of gravity shifting. Hip or joint pain might begin. Your energy may be higher than earlier weeks. Baby’s fat stores begin developing. They’re starting to gain weight quickly. The umbilical cord thickens to support growth. You may start nesting or organizing. Emotionally, a protective instinct may emerge. You’re doing everything right. Growth is steady and strong.",
+  18: "You might feel fluttering or bubbling sensations. Your lower back may ache. Sleep might become more disrupted. Baby’s ears are developed enough to hear. They may respond to sound and movement. Facial features are sharpening. You may feel overwhelmed or excited. You are nearing the halfway mark. Allow time for self-care and stretching. Your baby is becoming more real each day.",
+  19: "Stretch marks or skin changes may appear. You may feel occasional dizziness or forgetfulness. Hydration and posture help relieve strain. Baby’s senses are developing rapidly. They may hear your heartbeat and voice. Movement becomes more coordinated. Emotionally, you may feel more in tune. This is a beautiful window to bond. Singing or talking to baby is encouraged. Growth is accelerating wonderfully.",
+  20: "Halfway there! You may have your anatomy scan this week. You might experience more backaches or tightness. Baby’s organs are developing rapidly. They’re practicing swallowing and breathing. Eyebrows and scalp hair are visible. Emotionally, this milestone feels empowering. You may feel more confident and excited. It’s a good time to plan ahead. Keep enjoying this magical transformation.",
+  21: "Braxton Hicks may start or become more noticeable. You may feel pressure in your ribs. Your body is preparing gradually. Baby is gaining fat and growing steadily. Their limbs move fluidly now. Eyelids and eyebrows are distinct. You may feel more deeply bonded. Some moms start journaling or documenting changes. It’s okay to rest more often. Each week brings new beauty.",
+  22: "You might notice stretch marks or skin changes. Your belly button could start to pop out. Sleeping may require extra pillows. Baby’s grip is strengthening. Their facial features are fully formed. Lanugo, a fine hair, covers their body. Emotionally, you might feel creatively inspired. This week often brings more consistent movement. Document what you feel — it’s a unique phase. Let your body guide your pace.",
+  23: "Swelling in the feet or hands may begin. You might feel tingling or light cramping. Your balance may be off slightly. Baby is listening and reacting to loud sounds. Blood vessels become visible under skin. Their lungs continue to grow. Emotionally, you might feel productive and hopeful. This is a great time for calm activities. Yoga, rest, and reading are helpful. Your womb is now a cozy, active place.",
+  24: "You may feel aches in your hips and lower back. Heartburn could become more frequent. Walking slowly helps ease pressure. Baby’s lungs form branches for breathing. Their skin is still translucent. They’re now viable with intensive care if born. This week marks an important milestone. You might feel relieved or anxious. Celebrate how far you've come. The third trimester approaches.",
+  25: "You may feel your belly tighten randomly. Movement might be more pronounced now. Fatigue could creep back in. Baby’s reflexes are sharpening. They might respond to your touch or voice. Eyes begin to develop pigment. You may begin nesting behaviors. Emotionally, you may feel more intuitive. Make space for rest and joy. You’re nurturing a beautiful life.",
+  26: "Your sleep may become lighter or interrupted. Heartburn or shortness of breath may appear. Stretching and hydration help ease discomfort. Baby now responds to light and sound. Their eyes begin to open. They’re inhaling and exhaling amniotic fluid. You may feel closer to meeting them. Allow time to slow down. Every moment is shaping your baby. You’re doing incredible work.",
+  27: "Welcome to the third trimester! You may feel heavier or more tired. Swelling and leg cramps are common. Baby’s brain is rapidly developing. They have regular sleep and wake cycles. Eyelashes form and movement is strong. You may feel awe and fatigue in waves. Focus on support and calmness. Bonding continues to deepen. You’re on the final stretch.",
+  28: "Your belly feels prominent and active. Shortness of breath may increase. You might notice vivid dreams. Baby is blinking and moving often. They start forming memories. They respond clearly to voices. Emotionally, nesting may intensify. Rest becomes your new ritual. Ask for help when needed. You’re doing this with grace.",
+  29: "You may feel clumsy or off-balance. Fatigue might return with more intensity. Pressure on your bladder increases. Baby’s bones are strengthening. Their muscles and lungs are maturing. They gain weight quickly now. Emotionally, reassurance may feel essential. Take slow walks and warm baths. Embrace slower routines. You are strong and steady.",
+  30: "You may feel your baby shifting position. Skin may feel itchy or stretched. Finding sleep positions is tricky. Baby practices breathing more regularly. Their eyes track light and dark. Fat reserves are building. Emotional waves may rise and fall. Reflect on your progress so far. Keep your routines simple and gentle. Each moment brings you closer to birth.",
+  31: "You may feel pelvic pain or lightning crotch. Heartburn and restlessness continue. Support belts can offer relief. Baby responds to sound, light, and movement. They sleep most of the day. Their body fat is increasing steadily. Emotionally, anticipation rises. You may start final preparations. Enjoy quiet moments of connection. Baby is almost ready.",
+  32: "Your movements might feel slower and heavier. You may experience pressure in your pelvis. Frequent bathroom trips increase. Baby’s fingernails are growing. Their bones are fully developed but soft. They’re getting ready for birth. Emotional sensitivity may return. Practice deep breathing and patience. Prepare your space and your heart. You’re nearing the finish line.",
+  33: "You may experience Braxton Hicks more often. Legs might ache or swell after standing. Fatigue is more persistent. Baby continues to gain weight. Their immune system is developing. Their skull remains soft for birth. Emotions can feel raw or tender. You may find comfort in rituals. Keep things flexible and slow. You're preparing beautifully.",
+  34: "Sleep may be interrupted frequently. You may need more support while walking. Belly feels round and heavy. Baby’s organs are nearly ready for birth. They turn head-down in many cases. They react to your moods and sounds. Emotions swing quickly at this stage. Accept help where offered. Relaxation matters more than perfection. Trust your instincts.",
+  35: "You’re feeling very full and possibly impatient. Walking may be uncomfortable. Rest often and hydrate. Baby begins to drop into the pelvis. Their brain and lungs finish maturing. Their position may limit your breath. You may feel proud, anxious, or both. Surround yourself with positive affirmations. Light exercise is still beneficial. Soon, you’ll meet your little one.",
+  36: "Your body begins final preparations. You might experience stronger contractions. Sleep becomes increasingly fragmented. Baby is full-term and ready. They’re practicing blinking and grasping. They continue to gain weight daily. Emotions fluctuate rapidly now. Focus on calm and supportive surroundings. Pack your bag and relax your mind. You’re ready for delivery.",
+  37: "You might feel cramps, back pain, or pelvic pressure. Signs of labor may show. Short walks and deep breaths help. Baby’s lungs are fully mature. They’re engaged and in position. They react to light and voice. Emotionally, you may feel on alert. Practice self-trust and breathing exercises. Surround yourself with readiness and love. The wait is nearly over.",
+  38: "You may feel large and very ready to deliver. Every movement may feel exaggerated. Continue to rest deeply. Baby’s growth slows but development continues. They shed lanugo and increase fat stores. They’re fully ready for the world. Emotions may be a mix of joy and anxiety. Talk to someone regularly. Trust your timeline. Birth is close.",
+  39: "Cramping and spotting may increase. Contractions may start and stop. Breathe and stay hydrated. Baby’s nervous system is ready. They are fully formed and positioned. Their head is descending. You may reflect on the journey behind you. Keep affirming your strength. Your baby is nearly in your arms. Breathe into your courage.",
+  40: "Your due date has arrived. You may feel anticipation, pressure, or worry. Stay calm and trust your process. Baby is full-term and safe to arrive. They’re ready to meet you. Labor signs may appear anytime. Let your body and baby guide the pace. Focus on breathing and comfort. Soon, a new chapter begins. You’ve done something extraordinary."
+};
+
+    function getBabyGrowth(week) {
+      if (weekDescriptions[week]) return weekDescriptions[week];
+      return "Week data unavailable.";
+    }
+
+    function analyzeEmotion(emotion) {
+      if (/anxious|scared|worried/i.test(emotion)) {
+        return "It’s okay to feel anxious — try calming routines, talk to someone, and remind yourself you're doing great.";
+      } else if (/happy|calm|excited/i.test(emotion)) {
+        return "You're emotionally in tune — keep the positivity flowing!";
+      } else {
+        return "Emotions fluctuate — stay gentle with yourself and keep communication open with loved ones.";
+      }
+    }
+
+    function analyzeSymptoms(symptom) {
+      if (/back|pain|fatigue|swelling/i.test(symptom)) {
+        return "You may continue to feel discomfort. Light exercise and rest can help relieve it.";
+      } else if (/nausea|vomit|dizzy/i.test(symptom)) {
+        return "You may still experience nausea. Stay hydrated and eat small meals.";
+      } else {
+        return "Your symptoms may vary — stay mindful and consult your doctor when unsure.";
+      }
+    }
+
+    function generateGuide() {
+      const week = parseInt(document.getElementById("week").value);
+      const symptoms = document.getElementById("symptoms").value.trim();
+      const emotions = document.getElementById("emotions").value.trim();
+      const concerns = document.getElementById("concerns").value.trim();
+      const weekError = document.getElementById("week-error");
+      const output = document.getElementById("output");
+
+      if (isNaN(week) || week < 1 || week > 40) {
+      weekError.style.display = "block";
+      output.innerHTML = "<div class='section'><h3>❌ Invalid Input</h3><p>Please enter a number between 1 and 40 to get accurate information about your pregnancy week.</p></div>";
+        return;
+      }
+      weekError.style.display = "none";
+
+      output.innerHTML = `
+        <div class='section'>
+          <h3>🤰 Your Physical Experience This Week</h3>
+          <p>${analyzeSymptoms(symptoms)}</p>
+        </div>
+        <div class='section'>
+          <h3>💭 Your Emotional Journey Right Now</h3>
+          <p>${analyzeEmotion(emotions)}</p>
+        </div>
+        ${concerns ? `
+        <div class='section'>
+          <h3>⚠ Concerns Noted</h3>
+          <p>We're here to support you. Please consult your healthcare provider for: <strong>${concerns}</strong>.</p>
+        </div>` : ''}
+        <div class='section'>
+          <h3>👶 Your Baby's Development This Week</h3>
+          <p>${getBabyGrowth(week)}</p>
+        </div>
+        <div class='section'>
+          <h3>🌟 A Gentle Reminder Just for You</h3>
+          <p>You’re strong, growing life, and doing beautifully. Each step brings you closer to your baby. 💕</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

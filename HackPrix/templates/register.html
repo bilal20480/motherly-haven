@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doula Registration</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>Doula Registration Form 🤰</h2>
+    <form id="doulaForm" enctype="multipart/form-data" method="POST" action="/register">
+      <label>Name:</label>
+      <input type="text" name="name" required>
+
+      <label>Area:</label>
+      <input type="text" name="area" required>
+
+      <label>Email:</label>
+      <input type="email" name="email" required>
+
+      <label>Phone Number:</label>
+      <input type="tel" name="phone" required>
+
+      <label>Experience (in years):</label>
+      <input type="number" name="experience" min="0" required>
+
+      <label>Expertise In:</label>
+      <textarea name="expertise" rows="3" required></textarea>
+      
+      <label>Upload Picture:</label>
+      <input type="file" name="picture" accept="image/*" onchange="previewImage(event)" required>
+      <img id="preview" src="#" alt="Preview" style="display:none;"/>
+
+      <button type="submit">Register</button>
+    </form>
+    {% if message %}
+      <p class="success">{{ message }}</p>
+    {% endif %}
+  </div>
+  <script>
+    function previewImage(event) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const output = document.getElementById('preview');
+        output.src = reader.result;
+        output.style.display = 'block';
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  </script>
+</body>
+</html>
